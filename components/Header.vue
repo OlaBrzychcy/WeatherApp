@@ -1,5 +1,5 @@
 <template>
-    <view class="header-container">
+    <view class="content-header-container">
         <text class="header">Weather App</text>
     </view>
 </template>
@@ -10,7 +10,7 @@
     }
 </script>
 <style scoped>
-    .header-container {
+    .content-header-container {
         background-color: rgb(255,255,255);
         display: flex;
         justify-content: center;
