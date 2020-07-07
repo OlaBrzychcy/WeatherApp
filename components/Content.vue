@@ -1,14 +1,24 @@
 <template>
     <view class="container">
-        <text class="text-field-title">Location Object:</text>
-        <text>{{ location }}</text>
-        <text class="text-field-title">Latitude Only:</text>
-        <text>{{ latitude }}</text>
-        <text class="text-field-title">Longitude Only:</text>
-        <text>{{ longitude }}</text>
-        <text class="text-error">{{ errorMessage }}</text>
-        <text class="text-field-title" v-if="data_bool">Temperature:{{data.current.temp}}</text>
-        <text class="text-field-title" v-if="data_bool">Data:{{data.current.dt|moment}}</text>
+        <touchable-opacity :on-press="showCurrentWeather" class="menu-button my-button"
+                           v-if="data_bool && weather_not_showed">
+            <text class="text-field-title">Aktualna Pogoda</text>
+        </touchable-opacity>
+        <touchable-opacity :on-press="showHourlyWeather" class="menu-button my-button"
+                           v-if="data_bool && weather_not_showed">
+            <text class="text-field-title">Prognoza Godzinowa</text>
+        </touchable-opacity>
+        <touchable-opacity :on-press="showDailyWeather" class="menu-button my-button"
+                           v-if="data_bool && weather_not_showed">
+            <text class="text-field-title">Prognoza Dzienna</text>
+        </touchable-opacity>
+        <touchable-opacity :on-press="back" class="menu-button my-button"
+                           v-if="data_bool && !weather_not_showed">
+            <text class="text-field-title">Powrót</text>
+        </touchable-opacity>
+
+        <text class="text-field-title" v-if="current_weather">Temperature:{{data.current.temp}}</text>
+        <text class="text-field-title" v-if="current_weather">Data:{{data.current.dt|moment}}</text>
     </view>
 </template>
 <script>
@@ -28,7 +38,11 @@
                 errorMessage: "",
                 API_key: '57f44175e5284473edbdc5b9138c8a36',
                 data: {},
-                data_bool: false
+                data_bool: false,
+                current_weather: false,
+                hourly_weather: false,
+                daily_weather: false,
+                weather_not_showed: true,
 
             };
         },
@@ -71,6 +85,31 @@
                 }).catch(function (error) {
                     throw error;
                 })
+            },
+            showCurrentWeather: function () {
+
+                this.current_weather = true
+                this.daily_weather = false
+                this.hourly_weather = false
+                this.weather_not_showed = false
+            },
+            showHourlyWeather: function () {
+                this.current_weather = false
+                this.daily_weather = false
+                this.hourly_weather = true
+                this.weather_not_showed = false
+            },
+            showDailyWeather: function () {
+                this.current_weather = false
+                this.daily_weather = true
+                this.hourly_weather = false
+                this.weather_not_showed = false
+            },
+            back:function () {
+                this.current_weather = false
+                this.daily_weather = false
+                this.hourly_weather = false
+                this.weather_not_showed = true
             }
         }
     };
@@ -94,5 +133,9 @@
         border-width: 1px;
         padding: 3%;
         border-radius: 10px;
+    }
+
+    .menu-button {
+        margin: 2%;
     }
 </style>
