@@ -1,3 +1,4 @@
+<!--App Component is responsible for running whole app-->
 <template>
   <Main/>
 </template>

@@ -1,6 +1,7 @@
+<!--Header component is responsible for rendering header-->
 <template>
     <view class="content-header-container">
-        <text class="header">Weather App</text>
+        <text class="header">Pogoda</text>
     </view>
 </template>
 

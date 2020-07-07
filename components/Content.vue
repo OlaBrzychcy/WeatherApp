@@ -1,3 +1,4 @@
+<!--Content component is responsible for rendering whole content from OpenWeather api-->
 <template>
 
     <view class="container">
@@ -22,30 +23,34 @@
         <view class="loading-container" v-if="!data_bool">
             <activity-indicator size="large" color="#0000ff"></activity-indicator>
         </view>
-        <view class="container">
-        <touchable-opacity :on-press="showCurrentWeather" class="menu-button my-button"
-                           v-if="data_bool && weather_not_showed">
-            <text class="text-field-title">Aktualna Pogoda</text>
-        </touchable-opacity>
-        <touchable-opacity :on-press="showHourlyWeather" class="menu-button my-button"
-                           v-if="data_bool && weather_not_showed">
-            <text class="text-field-title">Prognoza Godzinowa</text>
-        </touchable-opacity>
-        <touchable-opacity :on-press="showDailyWeather" class="menu-button my-button"
-                           v-if="data_bool && weather_not_showed">
-            <text class="text-field-title">Prognoza Dzienna</text>
-        </touchable-opacity>
 
-        </view>
 
         <scroll-view class="scroll-view">
+            <view class="container">
+                <view class="container">
+                <touchable-opacity :on-press="showCurrentWeather" class="menu-button my-button"
+                                   v-if="data_bool && weather_not_showed">
+                    <image class="img" :source="{uri:'https://openweathermap.org/img/wn/01d@2x.png'}" style="max-width:100%;"></image>
+                    <text class="text-field-title">Aktualna Pogoda</text>
+                </touchable-opacity>
+                <touchable-opacity :on-press="showHourlyWeather" class="menu-button my-button"
+                                   v-if="data_bool && weather_not_showed">
+                    <image class="img" :source="{uri:'https://openweathermap.org/img/wn/02d@2x.png'}" style="max-width:100%;"></image>
+                    <text class="text-field-title">Prognoza Godzinowa</text>
+                </touchable-opacity>
+                <touchable-opacity :on-press="showDailyWeather" class="menu-button my-button"
+                                   v-if="data_bool && weather_not_showed">
+                    <image class="img" :source="{uri:'https://openweathermap.org/img/wn/03d@2x.png'}" style="max-width:100%;"></image>
+                    <text class="text-field-title">Prognoza Dzienna</text>
+                </touchable-opacity>
+                </view>
+            </view>
 
 
+        <BasicWeatherItem :current-item="data.current" :latitude="latitude" :longitude="longitude" v-if="current_weather"/>
 
-        <CurrentWeatherItem :current-item="data.current" :latitude="latitude" :longitude="longitude" v-if="current_weather"/>
 
-
-        <CurrentWeatherItem :current-item="item" :latitude="latitude" :longitude="longitude" v-if="hourly_weather" v-for="item in data.hourly"/>
+        <BasicWeatherItem :current-item="item" :latitude="latitude" :longitude="longitude" v-if="hourly_weather" v-for="item in data.hourly"/>
 
         <DailyWeatherItem :current-item="item" :latitude="latitude" :longitude="longitude" v-if="daily_weather" v-for="item in data.daily"/>
             </scroll-view>
@@ -56,13 +61,13 @@
     import * as Permissions from "expo-permissions";
     import axios from 'axios';
     import moment from 'moment';
-    import CurrentWeatherItem from "./CurrentWeatherItem";
+    import BasicWeatherItem from "./BasicWeatherItem";
     import DailyWeatherItem from "./DailyWeatherItem";
 
 
     export default {
         name: 'Content',
-        components: {CurrentWeatherItem,DailyWeatherItem},
+        components: {BasicWeatherItem,DailyWeatherItem},
         data: function () {
             return {
                 location: {},
@@ -91,6 +96,8 @@
         methods: {
 
             getLocationWeather: function () {
+                //This method is responsible for getting location of device and then get data about weather
+                //from OpenWeather API
                 this.data_bool = false;
                 Permissions.askAsync(Permissions.LOCATION)
                     .then(status => {
@@ -99,7 +106,6 @@
                         } else if (status.granted) {
                             Location.getCurrentPositionAsync({}).then(location => {
                                 this.location = location;
-                                console.log(location);
                                 this.latitude = location.coords.latitude
                                 this.longitude = location.coords.longitude
                                 this.errorMessage = "";
@@ -112,6 +118,7 @@
                     });
             },
             getWeather: function (latitude, longitude) {
+                // This method get data from OpenWeather Api based on latitude and longitude
                 var url = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&units=metric&lang=pl&exclude=minutely&appid=${this.API_key}`
                 return axios.get(url).then((response) => {
                     this.data = response.data;
@@ -121,25 +128,28 @@
                 })
             },
             showCurrentWeather: function () {
-
+                //This method cause that current weather data are shown
                 this.current_weather = true
                 this.daily_weather = false
                 this.hourly_weather = false
                 this.weather_not_showed = false
             },
             showHourlyWeather: function () {
+                //This method cause that hourly forecast data are shown
                 this.current_weather = false
                 this.daily_weather = false
                 this.hourly_weather = true
                 this.weather_not_showed = false
             },
             showDailyWeather: function () {
+                //This method daily forecast data are shown
                 this.current_weather = false
                 this.daily_weather = true
                 this.hourly_weather = false
                 this.weather_not_showed = false
             },
             back:function () {
+                // This method back to menu
                 this.current_weather = false
                 this.daily_weather = false
                 this.hourly_weather = false
@@ -189,7 +199,7 @@
     .back-button{
         padding: 15px;
         font-weight: bold;
-        color: lightgray;
+        color: #d3d3d3;
 
 
     }
@@ -198,8 +208,8 @@
 
 
 
-    .text-color-primary {
-        color: blue;
+    .text-field-title{
+        text-align: center;
     }
 
     .my-button {
@@ -209,9 +219,16 @@
         border-color: lightgray;
         padding: 3%;
         border-radius: 10px;
+        width:100%;
+        max-width: 320px;
     }
 
     .menu-button {
         margin: 2%;
+    }
+    .img {
+        height: 100px;
+        width: 150px;
+        flex:1
     }
 </style>

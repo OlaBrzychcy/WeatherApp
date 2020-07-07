@@ -1,3 +1,4 @@
+<!--Main Component stores Header and Content component-->
 <template>
     <view class="main-container">
         <Header/>

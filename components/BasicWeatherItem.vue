@@ -1,3 +1,4 @@
+<!--BasicWeatherItem component is responsible for displaying one piece of weather data for particular time-->
 <template>
     <view class="container">
         <image class="img" :source="{uri: `${image_url}`}" style="max-width:100%;"/>
@@ -17,24 +18,27 @@
     import moment from "moment";
 
     export default {
-        name:'CurrentWeatherItem',
+        name:'BasicWeatherItem',
         props:['currentItem', 'latitude', 'longitude'],
 
         filters: {
             moment: function (date) {
+                //This filter format date
                 return moment.unix(date).format('DD-MM-YYYY HH:mm');
             },
             capital_first_letter: function (string) {
+                //This filter make first letter of string Capital
                 return string.charAt(0).toUpperCase() + string.slice(1);
             }
         },
         computed:{
             image_url:function () {
+                //This method returns source url for icon
                 var url = `https://openweathermap.org/img/wn/${this.currentItem.weather[0].icon}@4x.png`;
-                console.log(url);
                 return url
             },
             hemisphere_NS:function () {
+                //This method returns on which hemisphere we are
                 if(this.longitude>0){
                     return 'N'
                 }
@@ -43,6 +47,7 @@
                 }
             },
             hemisphere_EW:function () {
+                //This method returns on which hemisphere we are
                 if(this.latitude>0){
                     return 'E'
                 }
