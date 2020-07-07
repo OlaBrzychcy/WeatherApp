@@ -1,5 +1,8 @@
 <template>
     <view class="container">
+        <view class="loading-container" :style="{flex: 1, justifyContent: 'center'}" v-if="!data_bool">
+            <activity-indicator size="large" color="#0000ff"></activity-indicator>
+        </view>
         <touchable-opacity :on-press="showCurrentWeather" class="menu-button my-button"
                            v-if="data_bool && weather_not_showed">
             <text class="text-field-title">Aktualna Pogoda</text>
