@@ -7,12 +7,15 @@
         <text class="text-field-title">Longitude Only:</text>
         <text>{{ longitude }}</text>
         <text class="text-error">{{ errorMessage }}</text>
+        <text class="text-field-title" v-if="data_bool">Temperature:{{data.current.temp}}</text>
+        <text class="text-field-title" v-if="data_bool">Data:{{data.current.dt|moment}}</text>
     </view>
 </template>
 <script>
     import * as Location from "expo-location";
     import * as Permissions from "expo-permissions";
     import axios from 'axios';
+    import moment from 'moment';
 
 
     export default {
@@ -31,6 +34,11 @@
         },
         created() {
             this.getLocationWeather();
+        },
+        filters: {
+            moment: function (date) {
+                return moment(date).format('DD-MM-YYYY HH:mm');
+            }
         },
 
         methods: {
